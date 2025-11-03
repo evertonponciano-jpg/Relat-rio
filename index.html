@@ -3,8 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comunicação com Motoristas - Controle por Agente</title>
+    <title>Relatório Diário LiveOps - Foodtosave</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* 🎨 Paleta de Cores Foodtosave */
+        :root {
+            --fts-green: #4CAF50; /* Verde principal mais vibrante */
+            --fts-green-dark: #45a049;
+            --fts-red: #e74c3c;
+            --fts-red-dark: #c0392b;
+            --text-dark: #2c3e50;
+            --text-light: #555;
+            --bg-light: #f7f9fc;
+            --border-color: #dfe4ea;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,9 +26,10 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-light);
             padding: 20px;
+            color: var(--text-dark);
         }
 
         .container {
@@ -22,38 +37,90 @@
             margin: 0 auto;
             background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px; /* Cantos mais suaves */
+            box-shadow: var(--card-shadow);
         }
 
-        h1 {
+        /* --- Cabeçalho --- */
+        .header {
             text-align: center;
-            color: #333;
             margin-bottom: 30px;
+            border-bottom: 3px solid var(--fts-green); /* Verde principal */
+            padding-bottom: 20px;
         }
 
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--fts-green), var(--fts-green-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .title {
+            color: var(--text-dark);
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        /* --- Formulário (Estilo App) --- */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
         }
 
-        input, select, textarea {
+        input[type="text"],
+        input[type="password"],
+        select,
+        textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
+            padding: 12px 15px; /* Mais preenchimento */
+            border: 1px solid var(--border-color);
+            border-radius: 8px; /* Bordas mais suaves */
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         textarea {
             height: 100px;
             resize: vertical;
+        }
+
+        /* 🎨 Efeito de Foco estilo App */
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--fts-green);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+            outline: none;
         }
 
         .radio-group, .checkbox-group {
@@ -66,76 +133,136 @@
         .radio-option, .checkbox-option {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            cursor: pointer;
         }
 
+        .radio-option label, .checkbox-option label {
+            font-weight: 400;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+        
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: var(--fts-green); /* Cor do check/radio */
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 🎨 Botões de Agente (Estilo "Chip") */
         .agent-selector {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
             margin-top: 10px;
         }
 
         .agent-btn {
             padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: #fdfdfd;
             cursor: pointer;
             text-align: center;
-            transition: all 0.3s;
+            font-weight: 500;
+            color: var(--text-dark);
+            transition: all 0.2s ease-in-out;
         }
 
         .agent-btn:hover {
-            border-color: #007bff;
-            background: #f0f8ff;
+            border-color: var(--fts-green);
+            background: #f1f8e9; /* Verde bem claro */
         }
 
         .agent-btn.selected {
-            border-color: #007bff;
-            background: #007bff;
+            border-color: var(--fts-green);
+            background: var(--fts-green);
             color: white;
+            font-weight: 700;
+            transform: scale(1.03); /* Efeito de "pop" */
+            box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
         }
 
+        /* --- Botões de Ação --- */
         .btn {
-            background-color: #007bff;
+            background-color: var(--fts-green); /* Verde como padrão */
             color: white;
-            padding: 12px 30px;
+            padding: 14px 30px; /* Botão maior */
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: 700;
             width: 100%;
             margin-top: 10px;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
         }
 
         .btn:hover {
-            background-color: #0056b3;
+            background-color: var(--fts-green-dark);
+            transform: translateY(-2px); /* Efeito de "levantar" */
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
         }
 
+        /* Botão Secundário (Vazado) */
         .btn-secondary {
-            background-color: #28a745;
-            margin-top: 10px;
+            background-color: #f1f8e9;
+            color: var(--fts-green);
+            border: 2px solid var(--fts-green);
+            padding: 12px 30px; /* Ajuste por causa da borda */
         }
 
         .btn-secondary:hover {
-            background-color: #218838;
+            background-color: #e8f5e9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
         }
 
+        /* Botão de Perigo (Sair) */
+        .btn-danger {
+            background-color: var(--fts-red);
+        }
+        .btn-danger:hover {
+            background-color: var(--fts-red-dark);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        /* --- Seção de Estatísticas --- */
         .stats-section {
             margin-top: 40px;
+        }
+
+        .private-section {
+            margin-top: 20px;
+            border: 2px solid var(--border-color); /* Borda neutra */
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--bg-light);
+        }
+
+        .access-panel {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .access-panel h3 {
+            color: var(--text-dark); /* Cor de texto padrão */
+            margin-bottom: 20px;
+        }
+
+        .access-input {
+            max-width: 300px;
+            margin: 0 auto 15px auto !important;
+            display: block !important;
+            text-align: center;
         }
 
         .agent-stats, .leadership-sheet {
             margin-top: 20px;
             padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            border-left: 4px solid #007bff;
-        }
-
-        .leadership-sheet {
-            border-left-color: #28a745;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border-left: 4px solid var(--fts-green); /* Verde como destaque */
         }
 
         .stats-grid {
@@ -148,13 +275,18 @@
         .stat-item {
             background: white;
             padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .stat-item strong {
+            color: var(--text-dark);
         }
 
         .leader {
-            background: #fff3cd;
+            background: #fff8e1;
             border-color: #ffc107;
         }
 
@@ -163,33 +295,62 @@
             border-collapse: collapse;
             margin-top: 15px;
             background: white;
+            border-radius: 8px; /* Borda na tabela */
+            overflow: hidden; /* Para o radius funcionar */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         th, td {
-            padding: 12px;
+            padding: 14px; /* Mais espaçamento */
             text-align: left;
-            border: 1px solid #ddd;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        td {
+            color: var(--text-light);
         }
 
         th {
-            background-color: #f8f9fa;
-            font-weight: bold;
+            background-color: var(--bg-light);
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
         }
 
         .timestamp {
             font-size: 12px;
-            color: #666;
+            color: #777;
             margin-top: 5px;
+        }
+        
+        /* 🎨 Classes de utilidade do JS (substituindo o verde original) */
+        .foodtosave-green {
+            color: var(--fts-green);
+        }
+
+        .foodtosave-bg {
+            background-color: var(--fts-green);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📞 Comunicação com Motoristas - Controle por Agente</h1>
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">F</div>
+                <div>
+                    <div class="title">Relatório Diário LiveOps</div>
+                    <div class="subtitle">Foodtosave - Comunicação com Motoristas</div>
+                </div>
+            </div>
+        </div>
         
         <form id="communicationForm">
             <div class="form-group">
-                <label for="agentSelect">Agente Responsável:</label>
+                <label>Agente Responsável:</label>
                 <div class="agent-selector">
                     <div class="agent-btn" data-agent="Aline">Aline</div>
                     <div class="agent-btn" data-agent="Joel">Joel</div>
@@ -258,46 +419,107 @@
             <button type="submit" class="btn">💾 Registrar Comunicação</button>
         </form>
 
-        <!-- Seção de Estatísticas por Agente -->
         <div class="stats-section">
-            <div class="agent-stats">
-                <h3>📊 Estatísticas Mensais por Agente</h3>
-                <div class="stats-grid" id="agentStats">
-                    <!-- As estatísticas serão preenchidas dinamicamente -->
+            <div class="private-section">
+                <div class="access-panel" id="accessPanel">
+                    <h3>🔒 Área Restrita - Liderança Foodtosave</h3>
+                    <div class="form-group">
+                        <label style="text-align: left; max-width: 300px; margin: 0 auto 8px auto;">Usuário:</label>
+                        <input type="text" id="username" placeholder="Digite seu usuário" class="access-input">
+                    </div>
+                    <div class="form-group">
+                        <label style="text-align: left; max-width: 300px; margin: 0 auto 8px auto;">Senha:</label>
+                        <input type="password" id="password" placeholder="Digite a senha" class="access-input">
+                    </div>
+                    <button onclick="login()" class="btn" style="max-width: 300px;">🔑 Acessar Estatísticas</button>
+                </div>
+
+                <div id="stats-section" style="display: none;">
+                    <div class="agent-stats">
+                        <h3>📊 Estatísticas Mensais por Agente</h3>
+                        <div class="stats-grid" id="agentStats"></div>
+                    </div>
+
+                    <div class="leadership-sheet">
+                        <h3>📋 Planilha para Liderança - Resumo Mensal</h3>
+                        <button onclick="generateLeadershipSheet()" class="btn btn-secondary">🔄 Atualizar Planilha</button>
+                        
+                        <div id="leadershipTable">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Agente</th>
+                                        <th>Total de Casos</th>
+                                        <th>Para Driver</th>
+                                        <th>Para Suporte</th>
+                                        <th>Para Ambos</th>
+                                        <th>Último Registro</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadershipTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <div id="monthlySummary" style="margin-top: 20px;"></div>
+                    </div>
+                    
+                    <button onclick="logout()" class="btn btn-danger" style="margin-top: 20px;">🚪 Sair</button>
                 </div>
             </div>
+        </div>
 
-            <!-- Planilha para Liderança -->
-            <div class="leadership-sheet">
-                <h3>📋 Planilha para Liderança - Resumo Mensal</h3>
-                <button onclick="generateLeadershipSheet()" class="btn btn-secondary">🔄 Atualizar Planilha</button>
-                
-                <div id="leadershipTable">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Agente</th>
-                                <th>Total de Casos</th>
-                                <th>Para Driver</th>
-                                <th>Para Suporte</th>
-                                <th>Para Ambos</th>
-                                <th>Último Registro</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leadershipTableBody">
-                            <!-- Dados preenchidos via JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div id="monthlySummary" style="margin-top: 20px;">
-                    <!-- Resumo mensal será gerado aqui -->
-                </div>
+        <div style="text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid var(--border-color); color: var(--text-light);">
+            <div style="font-size: 14px;">
+                <strong>Foodtosave - Relatório Diário LiveOps</strong><br>
+                <span style="font-size: 12px;">Sistema de comunicação e monitoramento de motoristas</span>
             </div>
         </div>
     </div>
 
     <script>
+        // 🔒 SISTEMA DE LOGIN PARA ESTATÍSTICAS
+        const AUTHORIZED_USERS = {
+            "lider": "senha123",
+            "gerente": "admin2025",
+            "coordenador": "coord123"
+        };
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (AUTHORIZED_USERS[username] === password) {
+                document.getElementById('accessPanel').style.display = 'none';
+                document.getElementById('stats-section').style.display = 'block';
+                localStorage.setItem('statsLoggedIn', 'true');
+                
+                // Atualizar as estatísticas quando logar
+                updateAgentStats();
+                updateLeadershipSheet();
+            } else {
+                alert('❌ Usuário ou senha incorretos!');
+            }
+        }
+
+        function logout() {
+            document.getElementById('accessPanel').style.display = 'block';
+            document.getElementById('stats-section').style.display = 'none';
+            localStorage.removeItem('statsLoggedIn');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Verificar se já está logado
+        function checkLoginStatus() {
+            if (localStorage.getItem('statsLoggedIn') === 'true') {
+                document.getElementById('accessPanel').style.display = 'none';
+                document.getElementById('stats-section').style.display = 'block';
+            } else {
+                document.getElementById('accessPanel').style.display = 'block';
+                document.getElementById('stats-section').style.display = 'none';
+            }
+        }
+
         // Dados armazenados localmente (em produção, use um banco de dados)
         let communications = JSON.parse(localStorage.getItem('communications')) || [];
         let selectedAgent = '';
@@ -320,6 +542,13 @@
                 alert('Por favor, selecione um agente responsável.');
                 return;
             }
+            
+            // 🎨 Validação de rádio
+            const recipientRadio = document.querySelector('input[name="recipient"]:checked');
+            if (!recipientRadio) {
+                alert('Por favor, selecione o destinatário da mensagem.');
+                return;
+            }
 
             const formData = {
                 id: Date.now(),
@@ -329,7 +558,7 @@
                 driverMessage: document.getElementById('driverMessage').value,
                 messageSent: document.getElementById('messageSent').value,
                 driverResponse: document.getElementById('driverResponse').value,
-                recipient: document.querySelector('input[name="recipient"]:checked').value,
+                recipient: recipientRadio.value,
                 orderId: document.getElementById('orderId').value,
                 logOl: document.getElementById('logOl').value,
                 sentToDriver: document.getElementById('sentToDriver').checked,
@@ -340,9 +569,11 @@
             communications.push(formData);
             localStorage.setItem('communications', JSON.stringify(communications));
 
-            // Atualizar estatísticas
-            updateAgentStats();
-            updateLeadershipSheet();
+            // Atualizar estatísticas apenas se estiver logado
+            if (localStorage.getItem('statsLoggedIn') === 'true') {
+                updateAgentStats();
+                updateLeadershipSheet();
+            }
 
             alert(`Comunicação registrada com sucesso para ${selectedAgent}!`);
             this.reset();
@@ -367,7 +598,7 @@
             };
 
             const total = monthlyComms.length;
-            const leader = Object.entries(agentStats).reduce((a, b) => a[1] > b[1] ? a : b);
+            const leader = Object.entries(agentStats).reduce((a, b) => a[1] > b[1] ? a : b, ['', 0]);
 
             statsContainer.innerHTML = '';
 
@@ -379,7 +610,7 @@
                 statItem.className = `stat-item ${isLeader ? 'leader' : ''}`;
                 statItem.innerHTML = `
                     <strong>${agent}</strong><br>
-                    <span style="font-size: 24px; color: ${isLeader ? '#ff6b00' : '#007bff'};">${count}</span> casos<br>
+                    <span style="font-size: 24px; color: ${isLeader ? '#ff6b00' : 'var(--fts-green)'};">${count}</span> casos<br>
                     <small>${percentage}% do total</small>
                     ${isLeader ? '<br><small>🏆 Líder do mês</small>' : ''}
                 `;
@@ -391,7 +622,7 @@
             totalItem.className = 'stat-item';
             totalItem.innerHTML = `
                 <strong>Total Geral</strong><br>
-                <span style="font-size: 24px; color: #28a745;">${total}</span> casos<br>
+                <span style="font-size: 24px; color: var(--fts-green);">${total}</span> casos<br>
                 <small>Mês ${currentMonth.split('-').reverse().join('/')}</small>
             `;
             statsContainer.appendChild(totalItem);
@@ -414,6 +645,8 @@
             // Calcular dados para cada agente
             monthlyComms.forEach(comm => {
                 const agent = comm.agent;
+                if (!agentData[agent]) return; // Proteção caso um agente antigo seja registrado
+                
                 agentData[agent].total++;
                 
                 if (comm.recipient === 'driver') agentData[agent].driver++;
@@ -436,7 +669,7 @@
                     <td>${data.driver}</td>
                     <td>${data.support}</td>
                     <td>${data.both}</td>
-                    <td>${data.lastDate ? new Date(data.lastDate).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                    <td>${data.lastDate ? new Date(data.lastDate + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A'}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -455,11 +688,11 @@
             const leader = getCurrentLeader();
 
             summaryContainer.innerHTML = `
-                <div style="background: white; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                <div style="background: var(--bg-light); padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border-color);">
                     <h4>📈 Resumo do Mês de ${currentMonth}</h4>
                     <p><strong>Total de casos registrados:</strong> ${totalCases}</p>
-                    <p><strong>Líder em atendimentos:</strong> ${leader.name} com ${leader.count} casos</p>
-                    <p><strong>Média por agente:</strong> ${Math.round(totalCases / 3)} casos</p>
+                    <p><strong>Líder em atendimentos:</strong> ${leader.name || 'N/A'} com ${leader.count} casos</p>
+                    <p><strong>Média por agente:</strong> ${(totalCases / 3).toFixed(1)} casos</p>
                     <p class="timestamp">Última atualização: ${new Date().toLocaleString('pt-BR')}</p>
                 </div>
             `;
@@ -493,8 +726,12 @@
 
         // Inicializar estatísticas ao carregar a página
         document.addEventListener('DOMContentLoaded', function() {
-            updateAgentStats();
-            updateLeadershipSheet();
+            checkLoginStatus();
+            // Só atualiza stats se estiver logado
+            if (localStorage.getItem('statsLoggedIn') === 'true') {
+                updateAgentStats();
+                updateLeadershipSheet();
+            }
         });
     </script>
 </body>
