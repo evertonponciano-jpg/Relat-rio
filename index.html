@@ -136,10 +136,6 @@
             color: var(--text-light);
             margin-top: 5px;
         }
-        .helper-text a {
-            color: var(--fts-green);
-            font-weight: 500;
-        }
 
         input[type="text"],
         input[type="password"],
@@ -276,10 +272,12 @@
             background-color: var(--fts-red-dark);
             box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
         }
-
-        /* --- Seção de Estatísticas --- */
+        
+        /* --- 🔒 SECÇÃO DE ESTATÍSTICAS PRIVADA --- */
         .stats-section {
             margin-top: 40px;
+            border-top: 2px solid var(--border-color);
+            padding-top: 30px;
         }
 
         .private-section {
@@ -289,6 +287,21 @@
             padding: 20px;
             background: var(--bg-light);
             transition: background 0.3s;
+        }
+        
+        .access-panel {
+            text-align: center;
+            padding: 30px;
+        }
+        .access-panel h3 {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        .access-input {
+            max-width: 300px;
+            margin: 0 auto 15px auto !important;
+            display: block !important;
+            text-align: center;
         }
 
         .agent-stats, .leadership-sheet {
@@ -375,9 +388,7 @@
                 <label for="fotoLink">Link da Foto (Opcional):</label>
                 <input type="url" id="fotoLink" name="fotoLink" placeholder="Cole o link de compartilhamento da foto aqui...">
                 <p class="helper-text">
-                    1. Suba a foto na 
-                    <a href="https://drive.google.com/drive/folders/1UeivaLZpYJdEr6g-1g9wvVOV01z1codv?usp=sharing" target="_blank" rel="noopener noreferrer">Pasta do Drive</a>.
-                    2. Clique com o botão direito na foto > Compartilhar > Copiar link.
+                    Instrução: Suba a foto na pasta do Drive da equipa e cole o link de partilha.
                 </p>
             </div>
 
@@ -430,6 +441,7 @@
 
         <div class="stats-section">
             <div class="private-section">
+                
                 <div class="access-panel" id="accessPanel">
                     <h3>🔒 Área Restrita - Liderança Foodtosave</h3>
                     <div class="form-group">
@@ -443,14 +455,14 @@
                     <button onclick="login()" class="btn" style="max-width: 300px;">🔑 Acessar Estatísticas</button>
                 </div>
 
-                <div id="stats-section" style="display: none;">
+                <div id="stats-content" style="display: none;">
                     <div class="agent-stats">
-                        <h3>📊 Estatísticas Mensais por Agente</h3>
+                        <h3>📊 Estatísticas Mensais por Agente (Dados Locais)</h3>
                         <div class="stats-grid" id="agentStats"></div>
                     </div>
 
                     <div class="leadership-sheet">
-                        <h3>📋 Planilha para Liderança - Resumo Mensal</h3>
+                        <h3>📋 Planilha para Liderança - Resumo Mensal (Dados Locais)</h3>
                         <button onclick="generateLeadershipSheet()" class="btn btn-secondary">🔄 Atualizar Planilha</button>
                         
                         <div id="leadershipTable">
@@ -518,10 +530,15 @@
             const password = document.getElementById('password').value;
             
             if (AUTHORIZED_USERS[username] === password) {
-                document.getElementById('accessPanel').style.display = 'none';
-                document.getElementById('stats-section').style.display = 'block';
+                // SUCESSO: Salva a sessão no localStorage
                 localStorage.setItem('statsLoggedIn', 'true');
                 
+                // Esconde o painel de login
+                document.getElementById('accessPanel').style.display = 'none';
+                // Mostra o conteúdo das estatísticas
+                document.getElementById('stats-content').style.display = 'block';
+                
+                // Atualiza as estatísticas
                 updateAgentStats();
                 updateLeadershipSheet();
             } else {
@@ -530,22 +547,35 @@
         }
 
         function logout() {
-            document.getElementById('accessPanel').style.display = 'block';
-            document.getElementById('stats-section').style.display = 'none';
+            // Remove a sessão salva
             localStorage.removeItem('statsLoggedIn');
+            
+            // Mostra o painel de login
+            document.getElementById('accessPanel').style.display = 'block';
+            // Esconde o conteúdo das estatísticas
+            document.getElementById('stats-content').style.display = 'none';
+            
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
         }
 
         function checkLoginStatus() {
+            // Verifica se a sessão está "salva"
             if (localStorage.getItem('statsLoggedIn') === 'true') {
+                // Já está logado
                 document.getElementById('accessPanel').style.display = 'none';
-                document.getElementById('stats-section').style.display = 'block';
+                document.getElementById('stats-content').style.display = 'block';
+                // Atualiza os dados ao carregar a página
+                updateAgentStats();
+                updateLeadershipSheet();
             } else {
+                // Não está logado
                 document.getElementById('accessPanel').style.display = 'block';
-                document.getElementById('stats-section').style.display = 'none';
+                document.getElementById('stats-content').style.display = 'none';
             }
         }
+
+        // --- LÓGICA DO FORMULÁRIO ---
 
         // Dados armazenados localmente
         let communications = JSON.parse(localStorage.getItem('communications')) || [];
@@ -586,7 +616,7 @@
                 // Novos campos
                 orderId: document.getElementById('orderId').value,
                 logCorrida: document.getElementById('logCorrida').value, 
-                fotoLink: document.getElementById('fotoLink').value, // NOVO CAMPO
+                fotoLink: document.getElementById('fotoLink').value, 
                 ols: selectedOLs.join(', '), 
                 driverMessage: document.getElementById('driverMessage').value,
                 driverResponse: document.getElementById('driverResponse').value,
@@ -597,7 +627,7 @@
                 messageSent: document.getElementById('driverMessage').value,
                 driverResponse: document.getElementById('driverResponse').value,
                 recipient: 'both', 
-                logOl: `Log: ${document.getElementById('logCorrida').value} / OLs: ${selectedOLs.join(', ')} / Foto: ${document.getElementById('fotoLink').value}`, // ATUALIZADO
+                logOl: `Log: ${document.getElementById('logCorrida').value} / OLs: ${selectedOLs.join(', ')} / Foto: ${document.getElementById('fotoLink').value}`, 
                 sentToDriver: true,
                 sentToSupport: true
             };
@@ -606,6 +636,7 @@
             communications.push(formData);
             localStorage.setItem('communications', JSON.stringify(communications));
 
+            // Se o utilizador estiver logado, atualiza as estatísticas em tempo real
             if (localStorage.getItem('statsLoggedIn') === 'true') {
                 updateAgentStats();
                 updateLeadershipSheet();
@@ -617,7 +648,8 @@
             selectedAgent = '';
         });
 
-        // Funções de Estatísticas (Simplificadas para a nova estrutura)
+        // --- LÓGICA DAS ESTATÍSTICAS (SÓ É CHAMADA SE ESTIVER LOGADO) ---
+
         function updateAgentStats() {
             const statsContainer = document.getElementById('agentStats');
             const currentMonth = new Date().toISOString().slice(0, 7);
@@ -652,7 +684,7 @@
             const totalItem = document.createElement('div');
             totalItem.className = 'stat-item';
             totalItem.innerHTML = `
-                <strong>Total Geral</strong><br>
+                <strong>Total Geral (Este Navegador)</strong><br>
                 <span style="font-size: 24px; color: var(--fts-green);">${total}</span> casos<br>
                 <small>Mês ${currentMonth.split('-').reverse().join('/')}</small>
             `;
@@ -720,7 +752,7 @@
             summaryContainer.innerHTML = `
                 <div style="background: var(--bg-card); padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border-color);">
                     <h4>📈 Resumo do Mês de ${currentMonth}</h4>
-                    <p><strong>Total de casos registrados:</strong> ${totalCases}</p>
+                    <p><strong>Total de casos (Este Navegador):</strong> ${totalCases}</p>
                     <p><strong>Líder em atendimentos:</strong> ${leader.name || 'N/A'} com ${leader.count} casos</p>
                     <p><strong>Média por agente:</strong> ${(totalCases / 3).toFixed(1)} casos</p>
                     <p class="timestamp">Última atualização: ${new Date().toLocaleString('pt-BR')}</p>
@@ -733,14 +765,11 @@
             alert('Planilha de liderança atualizada com sucesso!');
         }
 
-        // Inicializar
+        // --- INICIALIZAÇÃO DA PÁGINA ---
         document.addEventListener('DOMContentLoaded', function() {
             setInitialTheme();
-            checkLoginStatus();
-            if (localStorage.getItem('statsLoggedIn') === 'true') {
-                updateAgentStats();
-                updateLeadershipSheet();
-            }
+            checkLoginStatus(); 
+            // As estatísticas só serão carregadas se o checkLoginStatus() for bem-sucedido.
         });
     </script>
 </body>
