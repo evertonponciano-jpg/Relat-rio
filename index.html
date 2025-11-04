@@ -129,9 +129,21 @@
             font-weight: 500;
             color: var(--text-dark);
         }
+        
+        /* Helper text para o link da foto */
+        .helper-text {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        .helper-text a {
+            color: var(--fts-green);
+            font-weight: 500;
+        }
 
         input[type="text"],
         input[type="password"],
+        input[type="url"],
         select,
         textarea {
             width: 100%;
@@ -169,6 +181,7 @@
             display: flex;
             gap: 15px;
             margin-top: 10px;
+            flex-wrap: wrap; /* Para telas menores */
         }
         .ol-option {
             display: flex;
@@ -351,6 +364,21 @@
             <div class="form-group">
                 <label for="orderId">ID do Pedido:</label>
                 <input type="text" id="orderId" name="orderId" placeholder="Digite o ID do pedido..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="logCorrida">Log da Corrida:</label>
+                <textarea id="logCorrida" name="logCorrida" placeholder="Cole o log da corrida ou principais eventos..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="fotoLink">Link da Foto (Opcional):</label>
+                <input type="url" id="fotoLink" name="fotoLink" placeholder="Cole o link de compartilhamento da foto aqui...">
+                <p class="helper-text">
+                    1. Suba a foto na 
+                    <a href="https://drive.google.com/drive/folders/1UeivaLZpYJdEr6g-1g9wvVOV01z1codv?usp=sharing" target="_blank" rel="noopener noreferrer">Pasta do Drive</a>.
+                    2. Clique com o botão direito na foto > Compartilhar > Copiar link.
+                </p>
             </div>
 
             <div class="form-group">
@@ -557,17 +585,19 @@
                 
                 // Novos campos
                 orderId: document.getElementById('orderId').value,
-                ols: selectedOLs.join(', '), // Salva as OLs selecionadas
+                logCorrida: document.getElementById('logCorrida').value, 
+                fotoLink: document.getElementById('fotoLink').value, // NOVO CAMPO
+                ols: selectedOLs.join(', '), 
                 driverMessage: document.getElementById('driverMessage').value,
                 driverResponse: document.getElementById('driverResponse').value,
                 supportMessage: document.getElementById('supportMessage').value,
                 supportResponse: document.getElementById('supportResponse').value,
 
                 // Campos antigos (mantidos para compatibilidade com o JS de estatísticas)
-                messageSent: document.getElementById('driverMessage').value, // Usando a mensagem do driver como 'sent'
+                messageSent: document.getElementById('driverMessage').value,
                 driverResponse: document.getElementById('driverResponse').value,
                 recipient: 'both', 
-                logOl: `OLs: ${selectedOLs.join(', ')} / Suporte Msg: ${document.getElementById('supportMessage').value}`,
+                logOl: `Log: ${document.getElementById('logCorrida').value} / OLs: ${selectedOLs.join(', ')} / Foto: ${document.getElementById('fotoLink').value}`, // ATUALIZADO
                 sentToDriver: true,
                 sentToSupport: true
             };
