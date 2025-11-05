@@ -251,100 +251,29 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
         }
-
-        /* Botão Secundário (Vazado) */
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--fts-green);
-            border: 2px solid var(--fts-green);
-            padding: 12px 30px;
-        }
-        .btn-secondary:hover {
-            background-color: rgba(76, 175, 80, 0.1);
-            transform: translateY(-2px);
-        }
-
-        /* Botão de Perigo (Sair) */
-        .btn-danger {
-            background-color: var(--fts-red);
-        }
-        .btn-danger:hover {
-            background-color: var(--fts-red-dark);
-            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        
+        /* Estilo do botão quando está a enviar dados */
+        .btn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
-        /* --- 🔒 SECÇÃO DE ESTATÍSTICAS PRIVADA --- */
+        /* --- SECÇÃO DE ESTATÍSTICAS (ADMIN) --- */
         .stats-section {
             margin-top: 40px;
             border-top: 2px solid var(--border-color);
             padding-top: 30px;
-        }
-
-        .private-section {
-            margin-top: 20px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            background: var(--bg-light);
-            transition: background 0.3s;
-        }
-        
-        .access-panel {
-            text-align: center;
-            padding: 30px;
-        }
-        .access-panel h3 {
-            color: var(--text-dark);
-            margin-bottom: 20px;
-        }
-        .access-input {
-            max-width: 300px;
-            margin: 0 auto 15px auto !important;
-            display: block !important;
             text-align: center;
         }
-
-        .agent-stats, .leadership-sheet {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: var(--bg-card);
-            border-radius: 8px;
-            border-left: 4px solid var(--fts-green);
-            transition: background-color 0.3s;
-        }
-        .leader {
-            background: #fff8e1;
-            border-color: #ffc107;
-        }
-        .dark-mode .leader {
-            background: #443c16;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background: var(--bg-card);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: background 0.3s;
-        }
-
-        th, td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        td {
-            color: var(--text-light);
-        }
-
-        th {
-            background-color: var(--bg-light);
-            font-weight: 700;
+        .stats-section h3 {
             color: var(--text-dark);
+        }
+        .stats-section p {
+             color: var(--text-light);
+             font-size: 16px;
+             margin-top: 10px;
         }
 
     </style>
@@ -371,7 +300,7 @@
                     <div class="agent-btn" data-agent="Joel">Joel</div>
                     <div class="agent-btn" data-agent="Davi">Davi</div>
                 </div>
-                <input type="hidden" id="selectedAgent" name="selectedAgent" required>
+                <input type="hidden" id="selectedAgent" name="agent" required>
             </div>
 
             <div class="form-group">
@@ -429,61 +358,14 @@
                 <label for="supportResponse">Resposta do Suporte:</label>
                 <textarea id="supportResponse" name="supportResponse" placeholder="Registre a resposta ou ação tomada pelo suporte..." required></textarea>
             </div>
-            
-            <input type="hidden" id="messageSent" name="messageSent" value="Auto-preenchido pelo JS">
-            <input type="hidden" id="logOl" name="logOl" value="Auto-preenchido pelo JS">
-            <input type="hidden" id="recipient" name="recipient" value="both">
-            <input type="hidden" id="sentToDriver" name="sentToDriver" value="on">
-            <input type="hidden" id="sentToSupport" name="sentToSupport" value="on">
 
-            <button type="submit" class="btn">💾 Registrar Comunicação</button>
+            <button type="submit" class="btn" id="submitBtn">💾 Registrar Comunicação</button>
         </form>
 
         <div class="stats-section">
-            <div class="private-section">
-                
-                <div class="access-panel" id="accessPanel">
-                    <h3>🔒 Área Restrita - Liderança Foodtosave</h3>
-                    <div class="form-group">
-                        <label style="text-align: left; max-width: 300px; margin: 0 auto 8px auto;">Usuário:</label>
-                        <input type="text" id="username" placeholder="Digite seu usuário" class="access-input">
-                    </div>
-                    <div class="form-group">
-                        <label style="text-align: left; max-width: 300px; margin: 0 auto 8px auto;">Senha:</label>
-                        <input type="password" id="password" placeholder="Digite a senha" class="access-input">
-                    </div>
-                    <button onclick="login()" class="btn" style="max-width: 300px;">🔑 Acessar Estatísticas</button>
-                </div>
-
-                <div id="stats-content" style="display: none;">
-                    <div class="agent-stats">
-                        <h3>📊 Estatísticas Mensais por Agente (Dados Locais)</h3>
-                        <div class="stats-grid" id="agentStats"></div>
-                    </div>
-
-                    <div class="leadership-sheet">
-                        <h3>📋 Planilha para Liderança - Resumo Mensal (Dados Locais)</h3>
-                        <button onclick="generateLeadershipSheet()" class="btn btn-secondary">🔄 Atualizar Planilha</button>
-                        
-                        <div id="leadershipTable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Agente</th>
-                                        <th>Total de Casos</th>
-                                        <th>Último Registro</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="leadershipTableBody"></tbody>
-                            </table>
-                        </div>
-
-                        <div id="monthlySummary" style="margin-top: 20px;"></div>
-                    </div>
-                    
-                    <button onclick="logout()" class="btn btn-danger" style="margin-top: 20px;">🚪 Sair</button>
-                </div>
-            </div>
+             <h3>📊 Estatísticas e Visão Mestre</h3>
+             <p>Todos os registos estão a ser contabilizados centralmente.</p>
+             <p>Para ver todos os dados, por favor aceda à sua planilha **Relatorio_LiveOps** no Google Sheets.</p>
         </div>
 
         <div style="text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid var(--border-color); color: var(--text-light);">
@@ -518,67 +400,15 @@
             themeToggle.textContent = isDarkMode ? '☀️ Modo Claro' : '🌙 Modo Escuro';
         });
 
-        // 🔒 SISTEMA DE LOGIN PARA ESTATÍSTICAS
-        const AUTHORIZED_USERS = {
-            "lider": "senha123",
-            "gerente": "admin2025",
-            "coordenador": "coord123"
-        };
 
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            if (AUTHORIZED_USERS[username] === password) {
-                // SUCESSO: Salva a sessão no localStorage
-                localStorage.setItem('statsLoggedIn', 'true');
-                
-                // Esconde o painel de login
-                document.getElementById('accessPanel').style.display = 'none';
-                // Mostra o conteúdo das estatísticas
-                document.getElementById('stats-content').style.display = 'block';
-                
-                // Atualiza as estatísticas
-                updateAgentStats();
-                updateLeadershipSheet();
-            } else {
-                alert('❌ Usuário ou senha incorretos!');
-            }
-        }
+        // --- LÓGICA DO FORMULÁRIO (AGORA LIGADO AO GOOGLE SHEETS) ---
 
-        function logout() {
-            // Remove a sessão salva
-            localStorage.removeItem('statsLoggedIn');
-            
-            // Mostra o painel de login
-            document.getElementById('accessPanel').style.display = 'block';
-            // Esconde o conteúdo das estatísticas
-            document.getElementById('stats-content').style.display = 'none';
-            
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        }
-
-        function checkLoginStatus() {
-            // Verifica se a sessão está "salva"
-            if (localStorage.getItem('statsLoggedIn') === 'true') {
-                // Já está logado
-                document.getElementById('accessPanel').style.display = 'none';
-                document.getElementById('stats-content').style.display = 'block';
-                // Atualiza os dados ao carregar a página
-                updateAgentStats();
-                updateLeadershipSheet();
-            } else {
-                // Não está logado
-                document.getElementById('accessPanel').style.display = 'block';
-                document.getElementById('stats-content').style.display = 'none';
-            }
-        }
-
-        // --- LÓGICA DO FORMULÁRIO ---
-
-        // Dados armazenados localmente
-        let communications = JSON.parse(localStorage.getItem('communications')) || [];
+        // ✅ URL INSERIDO!
+        var URL_DO_SEU_SCRIPT_APPS = "https://script.google.com/a/macros/foodtosave.com/s/AKfycbwI687iqj5bhA2ploxB6fI0fhrZXcP-ovrhEfM4WyC_1lnRNGLgjKsDrf_jePO5ODPPwg/exec";
+        // ✅ FIM DO URL
+        
+        const form = document.getElementById('communicationForm');
+        const submitBtn = document.getElementById('submitBtn');
         let selectedAgent = '';
 
         // Seleção de agente
@@ -592,8 +422,8 @@
         });
 
         // Submit do formulário
-        document.getElementById('communicationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Impede o envio padrão do formulário
             
             if (!selectedAgent) {
                 alert('Por favor, selecione o Agente Responsável.');
@@ -606,170 +436,50 @@
                  alert('Por favor, selecione pelo menos uma OL (99, Uber, Lalamove).');
                  return;
             }
-
-            const formData = {
-                id: Date.now(),
-                agent: selectedAgent,
-                timestamp: new Date().toLocaleString('pt-BR'),
-                date: new Date().toISOString().split('T')[0],
-                
-                // Novos campos
-                orderId: document.getElementById('orderId').value,
-                logCorrida: document.getElementById('logCorrida').value, 
-                fotoLink: document.getElementById('fotoLink').value, 
-                ols: selectedOLs.join(', '), 
-                driverMessage: document.getElementById('driverMessage').value,
-                driverResponse: document.getElementById('driverResponse').value,
-                supportMessage: document.getElementById('supportMessage').value,
-                supportResponse: document.getElementById('supportResponse').value,
-
-                // Campos antigos (mantidos para compatibilidade com o JS de estatísticas)
-                messageSent: document.getElementById('driverMessage').value,
-                driverResponse: document.getElementById('driverResponse').value,
-                recipient: 'both', 
-                logOl: `Log: ${document.getElementById('logCorrida').value} / OLs: ${selectedOLs.join(', ')} / Foto: ${document.getElementById('fotoLink').value}`, 
-                sentToDriver: true,
-                sentToSupport: true
-            };
-
-            // Salvar no localStorage
-            communications.push(formData);
-            localStorage.setItem('communications', JSON.stringify(communications));
-
-            // Se o utilizador estiver logado, atualiza as estatísticas em tempo real
-            if (localStorage.getItem('statsLoggedIn') === 'true') {
-                updateAgentStats();
-                updateLeadershipSheet();
-            }
-
-            alert(`Comunicação registrada com sucesso para ${selectedAgent}!`);
-            this.reset();
-            document.querySelectorAll('.agent-btn').forEach(b => b.classList.remove('selected'));
-            selectedAgent = '';
-        });
-
-        // --- LÓGICA DAS ESTATÍSTICAS (SÓ É CHAMADA SE ESTIVER LOGADO) ---
-
-        function updateAgentStats() {
-            const statsContainer = document.getElementById('agentStats');
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            const monthlyComms = communications.filter(comm => comm.date && comm.date.startsWith(currentMonth));
-
-            const agentStats = {
-                'Aline': monthlyComms.filter(comm => comm.agent === 'Aline').length,
-                'Joel': monthlyComms.filter(comm => comm.agent === 'Joel').length,
-                'Davi': monthlyComms.filter(comm => comm.agent === 'Davi').length
-            };
-
-            const total = monthlyComms.length;
-            const leader = Object.entries(agentStats).reduce((a, b) => a[1] > b[1] ? a : b, ['', 0]);
-
-            statsContainer.innerHTML = '';
-
-            Object.entries(agentStats).forEach(([agent, count]) => {
-                const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
-                const isLeader = agent === leader[0] && count > 0;
-                
-                const statItem = document.createElement('div');
-                statItem.className = `stat-item ${isLeader ? 'leader' : ''}`;
-                statItem.innerHTML = `
-                    <strong>${agent}</strong><br>
-                    <span style="font-size: 24px; color: ${isLeader ? '#ff6b00' : 'var(--fts-green)'};">${count}</span> casos<br>
-                    <small>${percentage}% do total</small>
-                    ${isLeader ? '<br><small>🏆 Líder do mês</small>' : ''}
-                `;
-                statsContainer.appendChild(statItem);
-            });
-
-            const totalItem = document.createElement('div');
-            totalItem.className = 'stat-item';
-            totalItem.innerHTML = `
-                <strong>Total Geral (Este Navegador)</strong><br>
-                <span style="font-size: 24px; color: var(--fts-green);">${total}</span> casos<br>
-                <small>Mês ${currentMonth.split('-').reverse().join('/')}</small>
-            `;
-            statsContainer.appendChild(totalItem);
-        }
-
-        function updateLeadershipSheet() {
-            const tableBody = document.getElementById('leadershipTableBody');
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            const monthlyComms = communications.filter(comm => comm.date && comm.date.startsWith(currentMonth));
-
-            const agentData = {
-                'Aline': { total: 0, lastDate: '' },
-                'Joel': { total: 0, lastDate: '' },
-                'Davi': { total: 0, lastDate: '' }
-            };
-
-            monthlyComms.forEach(comm => {
-                const agent = comm.agent;
-                if (!agentData[agent]) return;
-                
-                agentData[agent].total++;
-                
-                if (!agentData[agent].lastDate || comm.date > agentData[agent].lastDate) {
-                    agentData[agent].lastDate = comm.date;
+            
+            // Desativa o botão e mostra "A enviar..."
+            submitBtn.disabled = true;
+            submitBtn.textContent = "A registar...";
+            
+            // Prepara os dados do formulário
+            const formData = new FormData(form);
+            
+            // Adiciona as OLs (que não são apanhadas automaticamente)
+            formData.append('ols', selectedOLs.join(', '));
+            
+            // Envia os dados para o Google Apps Script
+            fetch(URL_DO_SEU_SCRIPT_APPS, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Sucesso!
+                    alert(`Comunicação registrada com sucesso para ${selectedAgent}!`);
+                    form.reset();
+                    document.querySelectorAll('.agent-btn').forEach(b => b.classList.remove('selected'));
+                    selectedAgent = '';
+                } else {
+                    // Erro
+                    alert('Houve um erro ao registar. Por favor, tente novamente.\nErro: ' + data.message);
                 }
+            })
+            .catch(error => {
+                // Erro de rede
+                alert('Houve um erro de rede. Verifique a sua ligação.\nErro: ' + error);
+            })
+            .finally(() => {
+                // Reativa o botão
+                submitBtn.disabled = false;
+                submitBtn.textContent = "💾 Registrar Comunicação";
             });
-
-            tableBody.innerHTML = '';
-
-            Object.entries(agentData).forEach(([agent, data]) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${agent}</strong></td>
-                    <td>${data.total}</td>
-                    <td>${data.lastDate ? new Date(data.lastDate + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A'}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-
-            updateMonthlySummary();
-        }
-
-        function getCurrentLeader() {
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            const monthlyComms = communications.filter(comm => comm.date && comm.date.startsWith(currentMonth));
-
-            const counts = {
-                'Aline': monthlyComms.filter(comm => comm.agent === 'Aline').length,
-                'Joel': monthlyComms.filter(comm => comm.agent === 'Joel').length,
-                'Davi': monthlyComms.filter(comm => comm.agent === 'Davi').length
-            };
-
-            const leader = Object.entries(counts).reduce((a, b) => a[1] > b[1] ? a : b, ['', 0]);
-            return { name: leader[0], count: leader[1] };
-        }
+        });
         
-        function updateMonthlySummary() {
-            const summaryContainer = document.getElementById('monthlySummary');
-            const currentMonth = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-            const totalCases = communications.filter(comm => comm.date && comm.date.startsWith(new Date().toISOString().slice(0, 7))).length;
-
-            const leader = getCurrentLeader();
-
-            summaryContainer.innerHTML = `
-                <div style="background: var(--bg-card); padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--border-color);">
-                    <h4>📈 Resumo do Mês de ${currentMonth}</h4>
-                    <p><strong>Total de casos (Este Navegador):</strong> ${totalCases}</p>
-                    <p><strong>Líder em atendimentos:</strong> ${leader.name || 'N/A'} com ${leader.count} casos</p>
-                    <p><strong>Média por agente:</strong> ${(totalCases / 3).toFixed(1)} casos</p>
-                    <p class="timestamp">Última atualização: ${new Date().toLocaleString('pt-BR')}</p>
-                </div>
-            `;
-        }
-
-        function generateLeadershipSheet() {
-            updateLeadershipSheet();
-            alert('Planilha de liderança atualizada com sucesso!');
-        }
-
-        // --- INICIALIZAÇÃO DA PÁGINA ---
+        // Inicializar Tema
         document.addEventListener('DOMContentLoaded', function() {
             setInitialTheme();
-            checkLoginStatus(); 
-            // As estatísticas só serão carregadas se o checkLoginStatus() for bem-sucedido.
+            // Já não precisamos de verificar o login ou carregar estatísticas locais.
         });
     </script>
 </body>
